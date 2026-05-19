@@ -397,9 +397,9 @@ static void cmd_benchmark(void) {
     printf("└──────────────────────────────┴──────────────┴──────────────┴──────────────┘\n\n");
 
     printf("Conclusión arquitectónica:\n");
-    printf("  • Se comprime primero y se cifra después; invertir el orden eleva la entropía y rompe la compresión.\n");
+    printf("  • Se comprime primero y se cifra después; invertir el orden aumenta la entropía y rompe la compresión.\n");
     printf("  • El archivo cifrado conserva casi todo el ahorro de I/O; el sobrecosto viene del CPU y del padding AES.\n");
-    printf("  • La llave se toma en runtime, se bloquea en RAM con mlock() cuando el kernel lo permite y se destruye tras usarse.\n\n");
+    printf("  • La llave se toma en runtime, se bloquea en RAM con mlock() cuando el kernel lo permite y se destruye después de usarse.\n\n");
 
     free(text);
 }
@@ -439,7 +439,7 @@ static void print_help(void) {
     printf("  :info                    Información del documento\n");
     printf("  :help                    Esta ayuda\n");
     printf("  :quit / :q               Salir\n\n");
-    printf("Nota: la llave no se pasa por argv. Se pide en runtime o se toma de CEDS_KEY para benchmark automatizado.\n\n");
+    printf("Nota: la llave no se pasa por argv. Se pide en runtime o se toma de CEDS_KEY para benchmarks automatizados.\n\n");
 }
 
 int main(int argc, char *argv[]) {

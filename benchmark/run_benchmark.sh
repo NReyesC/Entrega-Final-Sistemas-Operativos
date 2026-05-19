@@ -5,7 +5,11 @@ EDITOR="./bin/editor"
 GENTEST="./bin/gen_test"
 TESTFILE="${1:-}"
 RESULTS_DIR="benchmark/results"
-: "${CEDS_KEY:=benchmark-demo-key}"
+if [ -z "${CEDS_KEY:-}" ]; then
+    echo "ERROR: define CEDS_KEY antes de ejecutar el benchmark."
+    echo "Ejemplo: CEDS_KEY='tu-llave' ./benchmark/run_benchmark.sh archivo.txt"
+    exit 1
+fi
 export CEDS_KEY
 
 mkdir -p "$RESULTS_DIR"
@@ -21,7 +25,7 @@ if [ -z "$TESTFILE" ] || [ ! -f "$TESTFILE" ]; then
     if [ -f "$GENTEST" ]; then
         "$GENTEST" 5 "$TESTFILE"
     else
-        dd if=/dev/urandom bs=1M count=5 2>/dev/null | tr -dc 'a-zA-Z \n' | head -c 5242880 > "$TESTFILE"
+        yes "benchmark sistemas operativos cifrado compresion" | head -c 5242880 > "$TESTFILE"
     fi
 fi
 

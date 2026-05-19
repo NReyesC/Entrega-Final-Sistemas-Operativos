@@ -59,6 +59,7 @@ make
 - La llave **no** se pasa por `argv`.
 - El editor la solicita en runtime, o usa `CEDS_KEY` solo para automatizar pruebas y benchmark.
 - El buffer de la llave se intenta bloquear con `mlock()` para evitar swap cuando el kernel lo permite.
+- Si `mlock()` falla por permisos o límites del sistema (`RLIMIT_MEMLOCK`), el editor avisa porque la llave podría terminar paginada a swap.
 - Tras cifrar o descifrar, la memoria se destruye con borrado explícito.
 
 ## Formato `.ceds`

@@ -14,12 +14,13 @@
 #include <termios.h>
 #include <unistd.h>
 
-#define PBKDF2_ITERATIONS 100000
+#define PBKDF2_ITERATIONS 1000000
 #define AES_KEY_SIZE      32
 
 static int secure_lock(void *ptr, size_t len) {
     if (!ptr || len == 0) return 0;
     if (mlock(ptr, len) == 0) return 0;
+    fprintf(stderr, "Aviso: mlock() no pudo proteger %zu bytes de memoria sensible.\n", len);
     return -1;
 }
 

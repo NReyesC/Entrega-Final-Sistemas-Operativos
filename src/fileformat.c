@@ -211,7 +211,7 @@ int doc_load(const char *path, const char *passphrase, size_t passphrase_len,
     style_sz = hdr->style_count * sizeof(StyleEntry);
     crypto_sz = (hdr->flags & FLAG_ENCRYPTED) ? sizeof(CryptoMetadata) : 0;
     total_sz = sizeof(FileHeader) + style_sz + crypto_sz + header_get_encrypted_size(hdr);
-    if (total_sz != file_size || total_sz < sizeof(FileHeader)) {
+    if (total_sz != file_size) {
         fprintf(stderr, "doc_load: tamaños inconsistentes en el archivo\n");
         free(file_data);
         return -1;

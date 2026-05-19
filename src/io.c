@@ -59,14 +59,20 @@ int io_write_fd(const char *path, const uint8_t *data, size_t size) {
         size_t chunk = (size - offset < PAGE_SIZE) ? (size - offset) : PAGE_SIZE;
         memcpy(aligned_buf, data + offset, chunk);
 
-        ssize_t written = write(fd, aligned_buf, chunk);
-        if (written < 0) {
-            perror("io_write_fd: write");
-            free(aligned_buf);
-            close(fd);
-            return -1;
+        size_t written_total = 0;
+        while (written_total < chunk) {
+            ssize_t written = write(fd,
+                                    (const uint8_t *)aligned_buf + written_total,
+                                    chunk - written_total);
+            if (written < 0) {
+                perror("io_write_fd: write");
+                free(aligned_buf);
+                close(fd);
+                return -1;
+            }
+            written_total += (size_t)written;
         }
-        offset += (size_t)written;
+        offset += written_total;
     }
 
     free(aligned_buf);
@@ -98,7 +104,7 @@ int io_write_mmap(const char *path, const uint8_t *data, size_t size) {
     }
 
     /* ftruncate: establece el tamaño del archivo ANTES de mapearlo.
-     * Sin esto, mmap mapea un archivo vacío y cualquier escritura da SIGBUS. */
+     * Sin esto, cualquier escritura fuera del tamaño truncado puede dar SIGBUS. */
     if (ftruncate(fd, (off_t)size) < 0) {
         perror("io_write_mmap: ftruncate");
         close(fd);
@@ -204,12 +210,17 @@ int io_write_plain_naive(const char *path, const char *text, size_t size) {
     while (offset < size) {
         size_t chunk = (size - offset < NAIVE_BLOCK_SIZE)
                        ? (size - offset) : NAIVE_BLOCK_SIZE;
-        if (write(fd, text + offset, chunk) < 0) {
-            perror("io_write_plain_naive: write");
-            close(fd);
-            return -1;
+        size_t written_total = 0;
+        while (written_total < chunk) {
+            ssize_t written = write(fd, text + offset + written_total, chunk - written_total);
+            if (written < 0) {
+                perror("io_write_plain_naive: write");
+                close(fd);
+                return -1;
+            }
+            written_total += (size_t)written;
         }
-        offset += chunk;
+        offset += written_total;
     }
 
     close(fd);
